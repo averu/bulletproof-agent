@@ -7,6 +7,10 @@ import { Todo } from "../../types/todo";
 export const TodoList: React.FC = () => {
   const [todos] = useAtom(todosAtom);
 
+  if (!todos) {
+    return <div className="p-4 text-gray-900 text-center">Loading...</div>;
+  }
+
   if (todos.length === 0) {
     return (
       <div className="p-4 text-gray-900 text-center">

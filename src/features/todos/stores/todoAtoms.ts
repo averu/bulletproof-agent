@@ -1,14 +1,21 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { v4 as uuidv4 } from "uuid";
 import { Todo, TodoCreateInput, TodoUpdateInput } from "../types";
 
 // プライマリアトム：Todoリストを保持
-export const todosAtom = atom<Todo[]>([]);
+export const todosAtom = atomWithStorage<Todo[] | undefined>(
+  "todos",
+  undefined
+);
 
 // 新しいTodoを追加するアクション
 export const addTodoAtom = atom(
   null,
   (get, set, todoInput: TodoCreateInput) => {
+    const todos = get(todosAtom);
+    if (!todos) return; // todos が undefined の場合は何もしない
+
     const now = new Date();
     const newTodo: Todo = {
       id: uuidv4(),
@@ -16,7 +23,7 @@ export const addTodoAtom = atom(
       createdAt: now,
       updatedAt: now,
     };
-    set(todosAtom, [...get(todosAtom), newTodo]);
+    set(todosAtom, [...todos, newTodo]);
     return newTodo;
   }
 );
@@ -26,6 +33,8 @@ export const updateTodoAtom = atom(
   null,
   (get, set, { id, ...update }: { id: string } & TodoUpdateInput) => {
     const todos = get(todosAtom);
+    if (!todos) return; // todos が undefined の場合は何もしない
+
     const now = new Date();
     set(
       todosAtom,
@@ -39,6 +48,8 @@ export const updateTodoAtom = atom(
 // Todoを削除するアクション
 export const removeTodoAtom = atom(null, (get, set, id: string) => {
   const todos = get(todosAtom);
+  if (!todos) return; // todos が undefined の場合は何もしない
+
   set(
     todosAtom,
     todos.filter((todo) => todo.id !== id)
@@ -48,6 +59,8 @@ export const removeTodoAtom = atom(null, (get, set, id: string) => {
 // Todoを完了/未完了に切り替えるアクション
 export const toggleTodoAtom = atom(null, (get, set, id: string) => {
   const todos = get(todosAtom);
+  if (!todos) return; // todos が undefined の場合は何もしない
+
   const now = new Date();
   set(
     todosAtom,
@@ -62,6 +75,8 @@ export const toggleTodoAtom = atom(null, (get, set, id: string) => {
 // 完了済みのTodoを全て削除するアクション
 export const clearCompletedTodosAtom = atom(null, (get, set) => {
   const todos = get(todosAtom);
+  if (!todos) return; // todos が undefined の場合は何もしない
+
   set(
     todosAtom,
     todos.filter((todo) => !todo.completed)
@@ -71,6 +86,8 @@ export const clearCompletedTodosAtom = atom(null, (get, set) => {
 // 全てのTodoを完了/未完了にするアクション
 export const toggleAllTodosAtom = atom(null, (get, set, completed: boolean) => {
   const todos = get(todosAtom);
+  if (!todos) return; // todos が undefined の場合は何もしない
+
   const now = new Date();
   set(
     todosAtom,
@@ -81,11 +98,11 @@ export const toggleAllTodosAtom = atom(null, (get, set, completed: boolean) => {
 // 派生アトム：未完了のTodo数を算出
 export const incompleteTodosCountAtom = atom((get) => {
   const todos = get(todosAtom);
-  return todos.filter((todo) => !todo.completed).length;
+  return todos ? todos.filter((todo) => !todo.completed).length : 0;
 });
 
 // 派生アトム：完了済みのTodoがあるかどうか
 export const hasCompletedTodosAtom = atom((get) => {
   const todos = get(todosAtom);
-  return todos.some((todo) => todo.completed);
+  return todos ? todos.some((todo) => todo.completed) : false;
 });
