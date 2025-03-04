@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { createStore } from "jotai";
-import { todosAtom, addTodoAtom } from "../stores/todoAtoms";
-import { Todo, TodoCreateInput } from "../types";
+import { todosAtom, addTodoAtom, updateTodoAtom } from "../stores/todoAtoms";
+import { Todo, TodoCreateInput, TodoUpdateInput } from "../types";
 
 // UUIDを固定の値にモック
 vi.mock("uuid", () => ({
@@ -47,6 +47,52 @@ describe("addTodoAtom", () => {
     };
 
     store.set(addTodoAtom, newTodoInput);
+
+    expect(store.get(todosAtom)).toBeUndefined();
+  });
+});
+
+describe("updateTodoAtom", () => {
+  it("既存のTodoを更新できる", () => {
+    const store = createStore();
+    const initialTodos: Todo[] = [
+      {
+        id: "mocked-uuid",
+        title: "Initial Todo",
+        completed: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+    store.set(todosAtom, initialTodos);
+
+    const updateInput: { id: string } & TodoUpdateInput = {
+      id: "mocked-uuid",
+      title: "Updated Todo",
+    };
+
+    store.set(updateTodoAtom, updateInput);
+
+    const updatedTodos = store.get(todosAtom);
+    expect(updatedTodos).toHaveLength(1);
+    expect(updatedTodos?.[0]).toMatchObject({
+      id: "mocked-uuid",
+      title: "Updated Todo",
+      completed: false, // completed は更新されない
+    });
+    expect(localStorage.setItem).toHaveBeenCalled();
+  });
+
+  it("todosAtomがundefinedのときは何もしない", () => {
+    const store = createStore();
+    store.set(todosAtom, undefined);
+
+    const updateInput: { id: string } & TodoUpdateInput = {
+      id: "mocked-uuid",
+      title: "Updated Todo",
+    };
+
+    store.set(updateTodoAtom, updateInput);
 
     expect(store.get(todosAtom)).toBeUndefined();
   });
