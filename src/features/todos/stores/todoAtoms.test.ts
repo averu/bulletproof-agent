@@ -1,39 +1,53 @@
-import { renderHook, act } from "@testing-library/react";
-import { atom, useAtom } from "jotai";
-import { addTodoAtom } from "./todoAtoms";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { createStore } from "jotai";
+import { todosAtom, addTodoAtom } from "../stores/todoAtoms";
 import { Todo, TodoCreateInput } from "../types";
-import { describe, it, expect } from "vitest";
-import { AppProvider } from "@/providers/AppProvider";
+
+// UUIDを固定の値にモック
+vi.mock("uuid", () => ({
+  v4: vi.fn(() => "mocked-uuid"),
+}));
+
+beforeEach(() => {
+  localStorage.clear();
+  vi.spyOn(window.localStorage.__proto__, "setItem");
+  vi.spyOn(window.localStorage.__proto__, "getItem").mockReturnValue(null);
+});
 
 describe("addTodoAtom", () => {
   it("新しいTodoを追加できる", () => {
-    const initialTodosAtom = atom<Todo[]>([]);
+    const store = createStore();
+    const initialTodos = [] as Todo[];
+    store.set(todosAtom, initialTodos); // 初期値をセット
 
-    const { result } = renderHook(() => useAtom(addTodoAtom), {
-      wrapper: AppProvider,
-    });
-    const { result: todosResult } = renderHook(
-      () => useAtom(initialTodosAtom),
-      { wrapper: AppProvider }
-    );
-
-    const addTodo = result.current[1];
-    const todos = todosResult.current[0];
-
-    expect(todos).toEqual([]);
-
-    const todoInput: TodoCreateInput = {
-      title: "新しいTodo",
+    const newTodoInput: TodoCreateInput = {
+      title: "New Todo",
       completed: false,
     };
 
-    act(() => {
-      addTodo(todoInput);
+    store.set(addTodoAtom, newTodoInput); // addTodoAtom を呼び出す
+
+    const updatedTodos = store.get(todosAtom);
+    expect(updatedTodos).toHaveLength(1);
+    expect(updatedTodos?.[0]).toMatchObject({
+      id: "mocked-uuid",
+      title: "New Todo",
+      completed: false,
     });
+    expect(localStorage.setItem).toHaveBeenCalled();
+  });
 
-    const newTodos = todosResult.current[0];
-    expect(newTodos).toHaveLength(0); // todosAtomがatomWithStorageなので、initialTodosAtomには影響がない
+  it("todosAtomがundefinedのときは何もしない", () => {
+    const store = createStore();
+    store.set(todosAtom, undefined); // undefined の場合
 
-    // localStorageに保存されているか確認するテストは、ここでは省略します
+    const newTodoInput: TodoCreateInput = {
+      title: "New Todo",
+      completed: false,
+    };
+
+    store.set(addTodoAtom, newTodoInput);
+
+    expect(store.get(todosAtom)).toBeUndefined();
   });
 });
