@@ -10,7 +10,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/80 overflow-y-auto h-full w-full flex items-center justify-center">
+    <div
+      className="fixed inset-0 bg-gray-900/80 overflow-y-auto h-full w-full flex items-center justify-center"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
       <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
         <div className="mt-3 text-center text-gray-900">
           {children}
