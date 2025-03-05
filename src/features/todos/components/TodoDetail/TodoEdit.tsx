@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import { Todo, Status } from "../../types/todo";
+import { Todo, Status, statusOptions } from "../../types/todo";
 import { Button } from "../../../../components/Elements";
 import { Input } from "../../../../components/Form/Input";
-
-const statusOptions: { [key in Status]: string } = {
-  "not-started": "未対応",
-  "in-progress": "処理中",
-  completed: "処理済み",
-  pending: "保留",
-  done: "完了",
-};
 
 interface Props {
   todo: Todo;

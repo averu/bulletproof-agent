@@ -17,7 +17,7 @@ export const TodoForm: React.FC = () => {
       title: title.trim(),
       description: "",
       status: "not-started",
-      completed: false,
+      deleted: false,
     });
 
     setTitle("");

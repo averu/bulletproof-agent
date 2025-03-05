@@ -24,7 +24,7 @@ describe("addTodoAtom", () => {
       title: "New Todo",
       description: "",
       status: "not-started",
-      completed: false,
+      deleted: false,
     };
 
     store.set(addTodoAtom, newTodoInput); // addTodoAtom を呼び出す
@@ -36,7 +36,7 @@ describe("addTodoAtom", () => {
       title: "New Todo",
       description: "",
       status: "not-started",
-      completed: false,
+      deleted: false,
     });
     expect(localStorage.setItem).toHaveBeenCalled();
   });
@@ -49,7 +49,7 @@ describe("addTodoAtom", () => {
       title: "New Todo",
       description: "",
       status: "not-started",
-      completed: false,
+      deleted: false,
     };
 
     store.set(addTodoAtom, newTodoInput);
@@ -67,7 +67,7 @@ describe("updateTodoAtom", () => {
         title: "Initial Todo",
         description: "",
         status: "not-started",
-        completed: false,
+        deleted: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -88,7 +88,7 @@ describe("updateTodoAtom", () => {
       title: "Updated Todo",
       description: "",
       status: "not-started",
-      completed: false, // completed は更新されない
+      deleted: false, // deleted は更新されない
     });
     expect(localStorage.setItem).toHaveBeenCalled();
   });

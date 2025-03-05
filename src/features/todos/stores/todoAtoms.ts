@@ -72,7 +72,7 @@ export const toggleTodoAtom = atom(null, (get, set, id: string) => {
     todosAtom,
     todos.map((todo) =>
       todo.id === id
-        ? { ...todo, completed: !todo.completed, updatedAt: now }
+        ? { ...todo, deleted: !todo.deleted, updatedAt: now }
         : todo
     )
   );
@@ -85,30 +85,30 @@ export const clearCompletedTodosAtom = atom(null, (get, set) => {
 
   set(
     todosAtom,
-    todos.filter((todo) => !todo.completed)
+    todos.filter((todo) => !todo.deleted)
   );
 });
 
 // 全てのTodoを完了/未完了にするアクション
-export const toggleAllTodosAtom = atom(null, (get, set, completed: boolean) => {
+export const toggleAllTodosAtom = atom(null, (get, set, deleted: boolean) => {
   const todos = get(todosAtom);
   if (!todos) return; // todos が undefined の場合は何もしない
 
   const now = new Date();
   set(
     todosAtom,
-    todos.map((todo) => ({ ...todo, completed, updatedAt: now }))
+    todos.map((todo) => ({ ...todo, deleted, updatedAt: now }))
   );
 });
 
 // 派生アトム：未完了のTodo数を算出
 export const incompleteTodosCountAtom = atom((get) => {
   const todos = get(todosAtom);
-  return todos ? todos.filter((todo) => !todo.completed).length : 0;
+  return todos ? todos.filter((todo) => !todo.deleted).length : 0;
 });
 
 // 派生アトム：完了済みのTodoがあるかどうか
 export const hasCompletedTodosAtom = atom((get) => {
   const todos = get(todosAtom);
-  return todos ? todos.some((todo) => todo.completed) : false;
+  return todos ? todos.some((todo) => todo.deleted) : false;
 });

@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+export const statusOptions: { [key in Status]: string } = {
+  "not-started": "未対応",
+  "in-progress": "処理中",
+  completed: "処理済み",
+  pending: "保留",
+  done: "完了",
+};
+
 const StatusSchema = z.enum([
   "not-started",
   "in-progress",
@@ -14,7 +22,7 @@ const TodoSchema = z.object({
   title: z.string(),
   description: z.string(),
   status: StatusSchema,
-  completed: z.boolean(),
+  deleted: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

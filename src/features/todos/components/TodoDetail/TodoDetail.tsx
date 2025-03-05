@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import { useAtom } from "jotai";
-import { Todo, Status } from "../../types/todo";
+import { Todo, statusOptions } from "../../types/todo";
 import { showTodoDetailAtom, todosAtom } from "../../stores";
 import { Button } from "../../../../components/Elements";
 import { TodoEdit } from "./TodoEdit";
-
-const statusOptions: { [key in Status]: string } = {
-  "not-started": "未対応",
-  "in-progress": "処理中",
-  completed: "処理済み",
-  pending: "保留",
-  done: "完了",
-};
 
 interface Props {
   todo: Todo;

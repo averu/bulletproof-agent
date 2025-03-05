@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAtom } from "jotai";
 import {
   todosAtom,
@@ -14,6 +14,15 @@ export const TodoList: React.FC = () => {
   const [todos] = useAtom(todosAtom);
   const [selectedTodoId, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [showTodoDetail, setShowTodoDetail] = useAtom(showTodoDetailAtom);
+  const [selectedTodoIds, setSelectedTodoIds] = useState<string[]>([]);
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedTodoIds((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((selectedId) => selectedId !== id)
+        : [...prevSelected, id]
+    );
+  };
 
   if (!todos) {
     return <div className="p-4 text-gray-900 text-center">Loading...</div>;
@@ -31,16 +40,37 @@ export const TodoList: React.FC = () => {
 
   return (
     <div className="border rounded-md overflow-hidden">
-      {todos.map((todo: Todo, index: number) => {
-        return (
-          <React.Fragment key={todo.id}>
-            <TodoItem todo={todo} />
-            {todos.length > 1 && index < todos.length - 1 && (
-              <hr className="border-gray-300" />
-            )}
-          </React.Fragment>
-        );
-      })}
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
+              タイトル
+            </th>
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
+              ステータス
+            </th>
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
+              作成日
+            </th>
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
+              更新日
+            </th>
+            <th className="p-4 text-right text-sm font-bold text-gray-700">
+              操作
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {todos.map((todo: Todo) => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              isSelected={selectedTodoIds.includes(todo.id)}
+              onToggleSelect={handleToggleSelect}
+            />
+          ))}
+        </tbody>
+      </table>
       <Modal
         isOpen={showTodoDetail && !!selectedTodo}
         onClose={() => {

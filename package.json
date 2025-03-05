@@ -12,6 +12,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
     "jotai": "^2.12.1",
     "localforage": "^1.10.0",
     "react": "^19.0.0",
