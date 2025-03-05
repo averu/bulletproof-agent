@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useAtom } from "jotai";
 import {
   todosAtom,
@@ -14,15 +14,6 @@ export const TodoList: React.FC = () => {
   const [todos] = useAtom(todosAtom);
   const [selectedTodoId, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [showTodoDetail, setShowTodoDetail] = useAtom(showTodoDetailAtom);
-  const [selectedTodoIds, setSelectedTodoIds] = useState<string[]>([]);
-
-  const handleToggleSelect = (id: string) => {
-    setSelectedTodoIds((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((selectedId) => selectedId !== id)
-        : [...prevSelected, id]
-    );
-  };
 
   if (!todos) {
     return <div className="p-4 text-gray-900 text-center">Loading...</div>;
@@ -62,12 +53,7 @@ export const TodoList: React.FC = () => {
         </thead>
         <tbody>
           {todos.map((todo: Todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              isSelected={selectedTodoIds.includes(todo.id)}
-              onToggleSelect={handleToggleSelect}
-            />
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </tbody>
       </table>

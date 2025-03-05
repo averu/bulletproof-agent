@@ -1,5 +1,5 @@
 import React from "react";
-import { TodoForm, TodoList, TodoStats } from "../components";
+import { TodoForm, TodoList } from "../components";
 
 export const Todos: React.FC = () => {
   return (
@@ -8,7 +8,6 @@ export const Todos: React.FC = () => {
       <TodoForm />
       <div className="bg-white shadow-md rounded-md overflow-hidden">
         <TodoList />
-        <TodoStats />
       </div>
     </div>
   );

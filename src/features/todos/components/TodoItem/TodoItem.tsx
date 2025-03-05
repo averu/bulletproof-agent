@@ -12,15 +12,9 @@ import { ja } from "date-fns/locale";
 
 interface TodoItemProps {
   todo: Todo;
-  isSelected: boolean;
-  onToggleSelect: (id: string) => void;
 }
 
-export const TodoItem: React.FC<TodoItemProps> = ({
-  todo,
-  isSelected,
-  onToggleSelect,
-}) => {
+export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const [, removeTodo] = useAtom(removeTodoAtom);
   const [, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [, setShowTodoDetail] = useAtom(showTodoDetailAtom);
@@ -34,19 +28,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     setShowTodoDetail(true);
   };
 
-  const handleCheckboxChange = () => {
-    onToggleSelect(todo.id);
-  };
-
   return (
     <tr className={`${todo.status === "done" ? "bg-gray-100" : ""}`}>
       <td className="p-4">
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={handleCheckboxChange}
-          className="mr-2"
-        />
         <span
           className={`text-gray-800 ${
             todo.deleted ? "line-through text-gray-500" : ""
