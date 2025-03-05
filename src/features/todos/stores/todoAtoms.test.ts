@@ -22,6 +22,8 @@ describe("addTodoAtom", () => {
 
     const newTodoInput: TodoCreateInput = {
       title: "New Todo",
+      description: "",
+      status: "not-started",
       completed: false,
     };
 
@@ -32,6 +34,8 @@ describe("addTodoAtom", () => {
     expect(updatedTodos?.[0]).toMatchObject({
       id: "mocked-uuid",
       title: "New Todo",
+      description: "",
+      status: "not-started",
       completed: false,
     });
     expect(localStorage.setItem).toHaveBeenCalled();
@@ -43,6 +47,8 @@ describe("addTodoAtom", () => {
 
     const newTodoInput: TodoCreateInput = {
       title: "New Todo",
+      description: "",
+      status: "not-started",
       completed: false,
     };
 
@@ -59,6 +65,8 @@ describe("updateTodoAtom", () => {
       {
         id: "mocked-uuid",
         title: "Initial Todo",
+        description: "",
+        status: "not-started",
         completed: false,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -78,6 +86,8 @@ describe("updateTodoAtom", () => {
     expect(updatedTodos?.[0]).toMatchObject({
       id: "mocked-uuid",
       title: "Updated Todo",
+      description: "",
+      status: "not-started",
       completed: false, // completed は更新されない
     });
     expect(localStorage.setItem).toHaveBeenCalled();

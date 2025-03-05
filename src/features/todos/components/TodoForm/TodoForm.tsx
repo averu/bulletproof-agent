@@ -15,6 +15,8 @@ export const TodoForm: React.FC = () => {
 
     addTodo({
       title: title.trim(),
+      description: "",
+      status: "not-started",
       completed: false,
     });
 

@@ -1,7 +1,12 @@
 import React from "react";
 import { useAtom } from "jotai";
 import { Todo } from "../../types";
-import { toggleTodoAtom, removeTodoAtom } from "../../stores";
+import {
+  toggleTodoAtom,
+  removeTodoAtom,
+  selectedTodoIdAtom,
+  showTodoDetailAtom,
+} from "../../stores";
 import { Button } from "../../../../components/Elements";
 import { Checkbox } from "../../../../components/Form";
 
@@ -12,6 +17,8 @@ interface TodoItemProps {
 export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const [, toggleTodo] = useAtom(toggleTodoAtom);
   const [, removeTodo] = useAtom(removeTodoAtom);
+  const [, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
+  const [, setShowTodoDetail] = useAtom(showTodoDetailAtom);
 
   const handleToggle = () => {
     toggleTodo(todo.id);
@@ -21,8 +28,13 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
     removeTodo(todo.id);
   };
 
+  const handleShowDetail = () => {
+    setSelectedTodoId(todo.id);
+    setShowTodoDetail(true);
+  };
+
   return (
-    <div className="flex items-center p-4 border-b last:border-b-0">
+    <div className="flex items-center p-4">
       <Checkbox
         checked={todo.completed}
         onChange={handleToggle}
@@ -35,6 +47,15 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
       >
         {todo.title}
       </span>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleShowDetail}
+        aria-label="Show todo detail"
+        className="ml-1"
+      >
+        詳細
+      </Button>
       <Button
         variant="danger"
         size="sm"

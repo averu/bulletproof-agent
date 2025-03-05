@@ -9,6 +9,12 @@ export const todosAtom = atomWithStorage<Todo[] | undefined>(
   undefined
 );
 
+// 選択されたTodoのID
+export const selectedTodoIdAtom = atom<string | null>(null);
+
+// 詳細画面の表示状態
+export const showTodoDetailAtom = atom(false);
+
 // 新しいTodoを追加するアクション
 export const addTodoAtom = atom(
   null,
