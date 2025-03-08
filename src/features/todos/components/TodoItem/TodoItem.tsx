@@ -5,10 +5,12 @@ import {
   removeTodoAtom,
   selectedTodoIdAtom,
   showTodoDetailAtom,
+  isEditingAtom,
 } from "../../stores";
 import { Button } from "../../../../components/Elements";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
 
 interface TodoItemProps {
   todo: Todo;
@@ -18,6 +20,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const [, removeTodo] = useAtom(removeTodoAtom);
   const [, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [, setShowTodoDetail] = useAtom(showTodoDetailAtom);
+  const [, setIsEditing] = useAtom(isEditingAtom);
 
   const handleRemove = () => {
     removeTodo(todo.id);
@@ -54,7 +57,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           aria-label="Show todo detail"
           className="ml-1"
         >
-          詳細
+          <FiEye />
+        </Button>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => {
+            setSelectedTodoId(todo.id);
+            setShowTodoDetail(true);
+            setIsEditing(true);
+          }}
+          aria-label="Edit todo"
+          className="ml-1"
+        >
+          <FiEdit />
         </Button>
         <Button
           variant="danger"
@@ -63,7 +79,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           aria-label="Remove todo"
           className="ml-1"
         >
-          削除
+          <FiTrash2 />
         </Button>
       </td>
     </tr>
