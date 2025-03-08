@@ -1,21 +1,31 @@
 import React, { useState } from "react";
+import { useAtom } from "jotai";
 import { Todo, Status, statusOptions } from "../../types/todo";
 import { Button } from "../../../../components/Elements";
 import { Input } from "../../../../components/Form/Input";
+import { todosAtom, showTodoEditAtom } from "../../stores";
 
 interface Props {
   todo: Todo;
-  onSave: (updatedTodo: Todo) => void;
-  onCancel: () => void;
 }
 
-export const TodoEdit: React.FC<Props> = ({ todo, onSave, onCancel }) => {
+export const TodoEdit: React.FC<Props> = ({ todo }) => {
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description);
   const [status, setStatus] = useState(todo.status);
+  const [todos, setTodos] = useAtom(todosAtom);
+  const [, setShowTodoEdit] = useAtom(showTodoEditAtom);
 
-  const handleSave = () => {
-    onSave({ ...todo, title, description, status });
+  const handleSave = (updatedTodo: Todo) => {
+    const updatedTodos = (todos || []).map((t) =>
+      t.id === updatedTodo.id ? updatedTodo : t
+    );
+    setTodos(updatedTodos);
+    setShowTodoEdit(false);
+  };
+
+  const handleCancel = () => {
+    setShowTodoEdit(false);
   };
 
   return (
@@ -68,10 +78,14 @@ export const TodoEdit: React.FC<Props> = ({ todo, onSave, onCancel }) => {
         </select>
       </div>
       <div className="flex justify-end">
-        <Button onClick={handleSave} variant="primary" className="mr-2">
+        <Button
+          onClick={() => handleSave({ ...todo, title, description, status })}
+          variant="primary"
+          className="mr-2"
+        >
           保存
         </Button>
-        <Button onClick={onCancel} variant="secondary">
+        <Button onClick={handleCancel} variant="secondary">
           キャンセル
         </Button>
       </div>

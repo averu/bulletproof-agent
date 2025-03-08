@@ -1,49 +1,27 @@
 import React, { useState } from "react";
-import { useAtom } from "jotai";
-import { addTodoAtom } from "../../stores";
-import { Input } from "../../../../components/Form";
 import { Button } from "../../../../components/Elements";
+import Modal from "../../../../components/Elements/Modal";
+import { TodoAdd } from "../TodoAdd/TodoAdd";
 
 export const TodoForm: React.FC = () => {
-  const [title, setTitle] = useState("");
-  const [, addTodo] = useAtom(addTodoAtom);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
 
-    if (!title.trim()) return;
-
-    addTodo({
-      title: title.trim(),
-      description: "",
-      status: "not-started",
-      deleted: false,
-      userId: "user1",
-    });
-
-    setTitle("");
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6">
-      <div className="flex items-center">
-        <Input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="新しいタスクを入力..."
-          aria-label="新しいタスク"
-          className="flex-1 mr-2"
-        />
-        <Button
-          type="submit"
-          disabled={!title.trim()}
-          size="sm"
-          className="whitespace-nowrap ml-2"
-        >
-          追加
-        </Button>
-      </div>
-    </form>
+    <>
+      <Button type="button" onClick={handleOpenModal} className="mb-6">
+        追加
+      </Button>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <TodoAdd />
+      </Modal>
+    </>
   );
 };

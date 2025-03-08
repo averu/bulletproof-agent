@@ -5,7 +5,7 @@ import {
   removeTodoAtom,
   selectedTodoIdAtom,
   showTodoDetailAtom,
-  isEditingAtom,
+  showTodoEditAtom,
 } from "../../stores";
 import { Button } from "../../../../components/Elements";
 import { format } from "date-fns";
@@ -20,7 +20,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const [, removeTodo] = useAtom(removeTodoAtom);
   const [, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [, setShowTodoDetail] = useAtom(showTodoDetailAtom);
-  const [, setIsEditing] = useAtom(isEditingAtom);
+  const [, setShowTodoEdit] = useAtom(showTodoEditAtom);
 
   const handleRemove = () => {
     removeTodo(todo.id);
@@ -29,6 +29,13 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const handleShowDetail = () => {
     setSelectedTodoId(todo.id);
     setShowTodoDetail(true);
+    setShowTodoEdit(false);
+  };
+
+  const handleShowEdit = () => {
+    setSelectedTodoId(todo.id);
+    setShowTodoDetail(false);
+    setShowTodoEdit(true);
   };
 
   return (
@@ -62,11 +69,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         <Button
           variant="primary"
           size="sm"
-          onClick={() => {
-            setSelectedTodoId(todo.id);
-            setShowTodoDetail(true);
-            setIsEditing(true);
-          }}
+          onClick={handleShowEdit}
           aria-label="Edit todo"
           className="ml-1"
         >

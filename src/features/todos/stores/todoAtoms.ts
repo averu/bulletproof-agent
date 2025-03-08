@@ -15,8 +15,8 @@ export const selectedTodoIdAtom = atom<string | null>(null);
 // 詳細画面の表示状態
 export const showTodoDetailAtom = atom(false);
 
-// 編集モードの状態
-export const isEditingAtom = atom(false);
+// 編集画面の表示状態
+export const showTodoEditAtom = atom(false);
 
 // 新しいTodoを追加するアクション
 export const addTodoAtom = atom(

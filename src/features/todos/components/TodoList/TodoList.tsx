@@ -4,18 +4,21 @@ import {
   todosAtom,
   selectedTodoIdAtom,
   showTodoDetailAtom,
+  showTodoEditAtom,
 } from "../../stores";
 import { TodoItem } from "../TodoItem";
 import { Todo } from "../../types/todo";
 import { TodoDetail } from "../TodoDetail";
 import { Modal } from "../../../../components/Elements";
 import { authState } from "../../../../features/users/stores/userAtoms";
+import { TodoEdit } from "../TodoEdit/TodoEdit";
 
 export const TodoList: React.FC = () => {
   const [todos] = useAtom(todosAtom);
   const { user } = useAtomValue(authState);
   const [selectedTodoId, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [showTodoDetail, setShowTodoDetail] = useAtom(showTodoDetailAtom);
+  const [showTodoEdit, setShowTodoEdit] = useAtom(showTodoEditAtom);
 
   if (!user) {
     return (
@@ -68,13 +71,15 @@ export const TodoList: React.FC = () => {
         </tbody>
       </table>
       <Modal
-        isOpen={showTodoDetail && !!selectedTodo}
+        isOpen={(showTodoDetail || showTodoEdit) && !!selectedTodo}
         onClose={() => {
           setShowTodoDetail(false);
+          setShowTodoEdit(false);
           setSelectedTodoId(null);
         }}
       >
-        {selectedTodo && <TodoDetail todo={selectedTodo} />}
+        {showTodoDetail && selectedTodo && <TodoDetail todo={selectedTodo} />}
+        {showTodoEdit && selectedTodo && <TodoEdit todo={selectedTodo} />}
       </Modal>
     </div>
   );
