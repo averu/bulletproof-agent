@@ -11,6 +11,7 @@ export const convertSupabaseUserToUser = (
   return {
     id: supabaseUser.id,
     name: supabaseUser.user_metadata?.name || "",
+    email: supabaseUser.email!,
   };
 };
 

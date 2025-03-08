@@ -26,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         >
           <AiOutlineClose className="h-6 w-6 text-black" />
         </div>
-        <div className="mt-3 text-center text-gray-900">{children}</div>
+        <div className="mt-3">{children}</div>
       </div>
     </div>
   );

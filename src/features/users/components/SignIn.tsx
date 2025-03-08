@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import { Input } from "../../../components/Form/Input";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -24,31 +25,33 @@ export default function SignIn() {
   };
 
   return (
-    <div>
-      <h2>Sign In</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="bg-white p-4 rounded shadow max-w-sm mx-auto">
+      <h2 className="text-xl text-gray-900 text-center font-bold mb-4">
+        Sign In
+      </h2>
+      {error && <p>{error}</p>}
       <form onSubmit={handleSignIn}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+          required
+        />
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+          required
+        />
+        <button type="submit" disabled={loading} className="mt-4 w-full">
           {loading ? "Signing in..." : "Sign In"}
         </button>
       </form>

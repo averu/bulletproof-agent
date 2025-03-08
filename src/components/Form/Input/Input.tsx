@@ -8,15 +8,16 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, name, className = "", error, ...props }, ref) => {
     const baseStyles =
-      "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200";
+      "w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200";
     const variantStyles = error
       ? "border-red-300 focus:border-red-300 focus:ring-red-200"
       : "";
 
     const inputStyles = `${baseStyles} ${variantStyles} ${className}`;
 
+    console.log("Input Styles", inputStyles);
     return (
-      <div className="w-full">
+      <div className="w-full flex justify-center flex-col">
         {label && (
           <label
             htmlFor={name}

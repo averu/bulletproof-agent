@@ -20,15 +20,12 @@ export const TodoEdit: React.FC<Props> = ({ todo, onSave, onCancel }) => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Todoの編集</h2>
+      <h2 className="text-xl text-gray-900 text-center font-bold mb-4">
+        Todoの編集
+      </h2>
       <div className="mb-4">
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-gray-700"
-        >
-          タイトル
-        </label>
         <Input
+          label="タイトル"
           id="title"
           type="text"
           value={title}
@@ -39,13 +36,8 @@ export const TodoEdit: React.FC<Props> = ({ todo, onSave, onCancel }) => {
         />
       </div>
       <div className="mb-4">
-        <label
-          htmlFor="description"
-          className="block text-sm font-medium text-gray-700"
-        >
-          説明
-        </label>
         <Input
+          label="説明"
           id="description"
           type="text"
           value={description}
@@ -66,7 +58,7 @@ export const TodoEdit: React.FC<Props> = ({ todo, onSave, onCancel }) => {
           id="status"
           value={status}
           onChange={(e) => setStatus(e.target.value as Status)}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          className="mt-1 block w-full border text-gray-900 border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
           {Object.entries(statusOptions).map(([key, value]) => (
             <option key={key} value={key}>

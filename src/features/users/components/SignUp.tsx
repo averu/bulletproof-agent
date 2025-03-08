@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../../lib/supabase";
+import { Input } from "../../../components/Form/Input";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -30,41 +31,43 @@ export default function SignUp() {
   };
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="bg-white p-4 rounded shadow max-w-sm mx-auto">
+      <h2 className="text-xl text-gray-900 text-center font-bold mb-4">
+        Sign Up
+      </h2>
+      {error && <p>{error}</p>}
       <form onSubmit={handleSignUp}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="displayName">Display Name</label>
-          <input
-            id="displayName"
-            type="text"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" disabled={loading}>
+        <Input
+          label="Email"
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
+          required
+        />
+        <Input
+          label="Password"
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+          required
+        />
+        <Input
+          label="Display Name"
+          id="displayName"
+          type="text"
+          value={displayName}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setDisplayName(e.target.value)
+          }
+          required
+        />
+        <button type="submit" disabled={loading} className="mt-4 w-full">
           {loading ? "Signing up..." : "Sign Up"}
         </button>
       </form>
