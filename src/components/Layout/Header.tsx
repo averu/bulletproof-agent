@@ -8,7 +8,9 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 w-full p-4 bg-gray-100 flex justify-between z-50">
       <div>
-        <Link to="/">Home</Link>
+        <Link to="/" className="text-gray-700 font-bold">
+          Home
+        </Link>
       </div>
       <div>
         {auth.isAuthenticated ? (
@@ -18,7 +20,7 @@ const Header = () => {
             </span>
             <Link
               to="#"
-              className="mr-4"
+              className="mr-4 text-gray-700 font-bold"
               onClick={(event) => {
                 event.preventDefault();
                 supabase.auth.signOut();
@@ -29,10 +31,12 @@ const Header = () => {
           </>
         ) : (
           <>
-            <Link to="/auth/signin" className="mr-4">
+            <Link to="/auth/signin" className="mr-4 text-gray-700 font-bold">
               Sign In
             </Link>
-            <Link to="/auth/signup">Sign Up</Link>
+            <Link to="/auth/signup" className="text-gray-700 font-bold">
+              Sign Up
+            </Link>
           </>
         )}
       </div>
