@@ -1,5 +1,5 @@
 import React from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   todosAtom,
   selectedTodoIdAtom,
@@ -9,11 +9,21 @@ import { TodoItem } from "../TodoItem";
 import { Todo } from "../../types/todo";
 import { TodoDetail } from "../TodoDetail";
 import { Modal } from "../../../../components/Elements";
+import { authState } from "../../../../features/users/stores/userAtoms";
 
 export const TodoList: React.FC = () => {
   const [todos] = useAtom(todosAtom);
+  const { user } = useAtomValue(authState);
   const [selectedTodoId, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [showTodoDetail, setShowTodoDetail] = useAtom(showTodoDetailAtom);
+
+  if (!user) {
+    return (
+      <div className="p-4 text-gray-900 text-center">
+        Please sign in to view your todos.
+      </div>
+    );
+  }
 
   if (!todos) {
     return <div className="p-4 text-gray-900 text-center">Loading...</div>;

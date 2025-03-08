@@ -18,6 +18,7 @@ export const TodoForm: React.FC = () => {
       description: "",
       status: "not-started",
       deleted: false,
+      userId: "user1",
     });
 
     setTitle("");
