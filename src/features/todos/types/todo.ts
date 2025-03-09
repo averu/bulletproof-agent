@@ -24,6 +24,8 @@ const TodoSchema = z.object({
   status: StatusSchema,
   deleted: z.boolean(),
   userId: z.string(),
+  name: z.string(),
+  assigneeId: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -42,5 +44,7 @@ export const TodoUpdateInputSchema = TodoSchema.omit({
   userId: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  assigneeId: z.string().optional(),
 }).partial();
 export type TodoUpdateInput = z.infer<typeof TodoUpdateInputSchema>;

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { Todo, Status, statusOptions } from "../../types/todo";
 import { Button } from "../../../../components/Elements";
 import { Input } from "../../../../components/Form/Input";
+import { Textarea } from "../../../../components/Form/Textarea";
 import { todosAtom, showTodoEditAtom } from "../../stores";
+import { getUsers } from "../../../../features/users/utils/user";
 
 interface Props {
   todo: Todo;
@@ -13,8 +15,25 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description);
   const [status, setStatus] = useState(todo.status);
+  const [assigneeId, setAssigneeId] = useState(todo.assigneeId || "");
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // ローディング状態を追加
   const [todos, setTodos] = useAtom(todosAtom);
   const [, setShowTodoEdit] = useAtom(showTodoEditAtom);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoading(true); // データ取得開始時にローディングをtrueにする
+      const fetchedUsers = await getUsers();
+      if (fetchedUsers) {
+        setUsers(
+          fetchedUsers.map((user) => ({ id: user.id, name: user.name || "" }))
+        );
+      }
+      setIsLoading(false); // データ取得完了時にローディングをfalseにする
+    };
+    fetchUsers();
+  }, []);
 
   const handleSave = (updatedTodo: Todo) => {
     const updatedTodos = (todos || []).map((t) =>
@@ -46,12 +65,11 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
         />
       </div>
       <div className="mb-4">
-        <Input
+        <Textarea
           label="説明"
           id="description"
-          type="text"
           value={description}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setDescription(e.target.value)
           }
           className="mt-1 block w-full"
@@ -77,9 +95,38 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
           ))}
         </select>
       </div>
+      <div className="mb-4">
+        <label
+          htmlFor="assignee"
+          className="block text-sm font-medium text-gray-700"
+        >
+          担当者
+        </label>
+        {isLoading ? ( // ローディング中はローディング表示
+          <div className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm sm:text-sm">
+            読み込み中...
+          </div>
+        ) : (
+          <select
+            id="assignee"
+            value={assigneeId}
+            onChange={(e) => setAssigneeId(e.target.value)}
+            className="mt-1 block w-full py-2 px-3 border text-gray-700 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="">担当者なし</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
       <div className="flex justify-end">
         <Button
-          onClick={() => handleSave({ ...todo, title, description, status })}
+          onClick={() =>
+            handleSave({ ...todo, title, description, status, assigneeId })
+          }
           variant="primary"
           className="mr-2"
         >

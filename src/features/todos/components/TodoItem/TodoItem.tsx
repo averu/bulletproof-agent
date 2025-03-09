@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { Todo, statusOptions } from "../../types";
 import {
@@ -11,6 +11,7 @@ import { Button } from "../../../../components/Elements";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { FiEye, FiEdit, FiTrash2 } from "react-icons/fi";
+import { getUsers } from "../../../../features/users/utils/user";
 
 interface TodoItemProps {
   todo: Todo;
@@ -21,6 +22,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
   const [, setSelectedTodoId] = useAtom(selectedTodoIdAtom);
   const [, setShowTodoDetail] = useAtom(showTodoDetailAtom);
   const [, setShowTodoEdit] = useAtom(showTodoEditAtom);
+  const [assigneeName, setAssigneeName] = useState("");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const fetchedUsers = await getUsers();
+      if (fetchedUsers) {
+        const assignee = fetchedUsers.find(
+          (user) => user.id === todo.assigneeId
+        );
+        setAssigneeName(assignee?.name || "");
+      }
+    };
+    fetchUsers();
+  }, [todo.assigneeId]);
 
   const handleRemove = () => {
     removeTodo(todo.id);
@@ -48,6 +63,18 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         >
           {todo.title}
         </span>
+      </td>
+      <td className="p-4">
+        <span
+          className={`text-gray-800 ${
+            todo.deleted ? "line-through text-gray-500" : ""
+          }`}
+        >
+          {todo.name}
+        </span>
+      </td>
+      <td className="p-4">
+        <span className="text-gray-800">{assigneeName}</span>
       </td>
       <td className="p-4 text-gray-500">{statusOptions[todo.status]}</td>
       <td className="p-4 text-gray-500">

@@ -14,7 +14,10 @@ export default function SignUp() {
     setError(null);
     setLoading(true);
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    const {
+      data: { user },
+      error: signUpError,
+    } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -26,6 +29,27 @@ export default function SignUp() {
 
     if (signUpError) {
       setError(signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    if (user) {
+      const { error: invokeError } = await supabase.functions.invoke(
+        "user-sync",
+        {
+          body: {
+            record: {
+              id: user.id,
+              email: user.email,
+              name: displayName || "",
+            },
+          },
+        }
+      );
+
+      if (invokeError) {
+        setError(invokeError.message);
+      }
     }
     setLoading(false);
   };

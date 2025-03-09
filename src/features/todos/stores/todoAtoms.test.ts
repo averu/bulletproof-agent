@@ -26,6 +26,7 @@ describe("addTodoAtom", () => {
       status: "not-started",
       deleted: false,
       userId: "user1",
+      name: "User 1",
     };
 
     store.set(addTodoAtom, newTodoInput); // addTodoAtom を呼び出す
@@ -52,6 +53,7 @@ describe("addTodoAtom", () => {
       status: "not-started",
       deleted: false,
       userId: "user1",
+      name: "User 1",
     };
 
     store.set(addTodoAtom, newTodoInput);
@@ -71,6 +73,7 @@ describe("updateTodoAtom", () => {
         status: "not-started",
         deleted: false,
         userId: "user1",
+        name: "User 1",
         createdAt: new Date(),
         updatedAt: new Date(),
       },

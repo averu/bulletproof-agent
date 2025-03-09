@@ -51,6 +51,12 @@ export const TodoList: React.FC = () => {
               タイトル
             </th>
             <th className="p-4 text-left text-sm font-bold text-gray-700">
+              作成者
+            </th>
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
+              担当者
+            </th>
+            <th className="p-4 text-left text-sm font-bold text-gray-700">
               ステータス
             </th>
             <th className="p-4 text-left text-sm font-bold text-gray-700">
