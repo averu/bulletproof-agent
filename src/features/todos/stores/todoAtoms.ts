@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { v4 as uuidv4 } from "uuid";
-import { Todo, TodoCreateInput, TodoUpdateInput } from "../types";
+import { Status, Todo, TodoCreateInput, TodoUpdateInput } from "../types"; // Status をインポート
 
 // ソートの状態を保持する atom
 export const sortTypeAtom = atomWithStorage<{
@@ -11,6 +11,15 @@ export const sortTypeAtom = atomWithStorage<{
   sortType: null,
   sortOrder: "none",
 });
+
+// フィルタリングの状態を保持する atom ('all', 'active', 'completed')
+export const filterTypeAtom = atomWithStorage<Status[]>( // 型を Status[] に変更 (複数選択)
+  "filterType",
+  [], // 初期値は空配列 (すべて表示)
+);
+
+// 検索キーワードを保持する atom
+export const searchTermAtom = atom("");
 
 // プライマリアトム：Todo リストを保持
 export const todosAtom = atomWithStorage<Todo[] | undefined>(
@@ -41,6 +50,36 @@ export const sortedTodosAtom = atom((get) => {
     }
     return 0;
   });
+});
+
+// 派生アトム：フィルタリングされた Todo リスト
+export const filteredTodosAtom = atom((get) => {
+  const todos = get(sortedTodosAtom); // ソート済みのリストを使用
+  const selectedStatuses = get(filterTypeAtom); // 型は Status[]
+
+  // 選択されたステータスがない場合 (空配列) は、すべての Todo を返す
+  if (selectedStatuses.length === 0) {
+    return todos;
+  }
+
+  // 選択されたステータスのいずれかに一致する Todo をフィルタリング
+  return todos.filter((todo) => selectedStatuses.includes(todo.status));
+});
+
+// 派生アトム：検索された Todo リスト
+export const searchedTodosAtom = atom((get) => {
+  const todos = get(filteredTodosAtom); // フィルタリング済みのリストを使用
+  const searchTerm = get(searchTermAtom).toLowerCase();
+
+  if (!searchTerm) {
+    return todos;
+  }
+
+  return todos.filter(
+    (todo) =>
+      todo.title.toLowerCase().includes(searchTerm) ||
+      (todo.description && todo.description.toLowerCase().includes(searchTerm)), // description を検索対象にする
+  );
 });
 
 // 選択されたTodoのID
