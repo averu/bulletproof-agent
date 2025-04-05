@@ -125,7 +125,14 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
       <div className="flex justify-end">
         <Button
           onClick={() =>
-            handleSave({ ...todo, title, description, status, assigneeId })
+            handleSave({
+              ...todo,
+              title,
+              description,
+              status,
+              assigneeId,
+              updatedAt: new Date(),
+            })
           }
           variant="primary"
           className="mr-2"

@@ -3,11 +3,45 @@ import { atomWithStorage } from "jotai/utils";
 import { v4 as uuidv4 } from "uuid";
 import { Todo, TodoCreateInput, TodoUpdateInput } from "../types";
 
-// プライマリアトム：Todoリストを保持
+// ソートの状態を保持する atom
+export const sortTypeAtom = atomWithStorage<{
+  sortType: "createdAt" | "title" | null;
+  sortOrder: "asc" | "desc" | "none";
+}>("sortType", {
+  sortType: null,
+  sortOrder: "none",
+});
+
+// プライマリアトム：Todo リストを保持
 export const todosAtom = atomWithStorage<Todo[] | undefined>(
   "todos",
-  undefined
+  undefined,
 );
+
+// 派生アトム：ソートされた Todo リスト
+export const sortedTodosAtom = atom((get) => {
+  const todos = get(todosAtom);
+  const sortType = get(sortTypeAtom);
+
+  if (!todos) return [];
+
+  if (!sortType.sortType || sortType.sortOrder === "none") {
+    return todos;
+  }
+
+  return [...todos].sort((a, b) => {
+    const order = sortType.sortOrder === "asc" ? 1 : -1;
+    if (sortType.sortType === "createdAt") {
+      return (
+        order *
+        (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      );
+    } else if (sortType.sortType === "title") {
+      return order * a.title.localeCompare(b.title);
+    }
+    return 0;
+  });
+});
 
 // 選択されたTodoのID
 export const selectedTodoIdAtom = atom<string | null>(null);
@@ -34,7 +68,7 @@ export const addTodoAtom = atom(
     };
     set(todosAtom, [...todos, newTodo]);
     return newTodo;
-  }
+  },
 );
 
 // 特定のTodoを更新するアクション
@@ -49,9 +83,9 @@ export const updateTodoAtom = atom(
       todosAtom,
       todos.map((todo) =>
         todo.id === id ? { ...todo, ...update, updatedAt: now } : todo
-      )
+      ),
     );
-  }
+  },
 );
 
 // Todoを削除するアクション
@@ -61,7 +95,7 @@ export const removeTodoAtom = atom(null, (get, set, id: string) => {
 
   set(
     todosAtom,
-    todos.filter((todo) => todo.id !== id)
+    todos.filter((todo) => todo.id !== id),
   );
 });
 
@@ -77,7 +111,7 @@ export const toggleTodoAtom = atom(null, (get, set, id: string) => {
       todo.id === id
         ? { ...todo, deleted: !todo.deleted, updatedAt: now }
         : todo
-    )
+    ),
   );
 });
 
@@ -88,7 +122,7 @@ export const clearCompletedTodosAtom = atom(null, (get, set) => {
 
   set(
     todosAtom,
-    todos.filter((todo) => !todo.deleted)
+    todos.filter((todo) => !todo.deleted),
   );
 });
 
@@ -100,7 +134,7 @@ export const toggleAllTodosAtom = atom(null, (get, set, deleted: boolean) => {
   const now = new Date();
   set(
     todosAtom,
-    todos.map((todo) => ({ ...todo, deleted, updatedAt: now }))
+    todos.map((todo) => ({ ...todo, deleted, updatedAt: now })),
   );
 });
 

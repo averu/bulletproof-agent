@@ -78,10 +78,10 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
       </td>
       <td className="p-4 text-gray-500">{statusOptions[todo.status]}</td>
       <td className="p-4 text-gray-500">
-        {format(todo.createdAt, "yyyy/MM/dd HH:mm", { locale: ja })}
+        {format(todo.createdAt, "yyyy/MM/dd", { locale: ja })}
       </td>
       <td className="p-4 text-gray-500">
-        {format(todo.updatedAt, "yyyy/MM/dd HH:mm", { locale: ja })}
+        {format(todo.updatedAt, "yyyy/MM/dd", { locale: ja })}
       </td>
       <td className="p-4 flex justify-end">
         <Button

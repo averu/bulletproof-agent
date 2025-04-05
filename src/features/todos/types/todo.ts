@@ -43,7 +43,6 @@ export const TodoUpdateInputSchema = TodoSchema.omit({
   id: true,
   userId: true,
   createdAt: true,
-  updatedAt: true,
 }).extend({
   assigneeId: z.string().optional(),
 }).partial();
