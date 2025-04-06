@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Todo, statusOptions } from "../../types/todo";
+import { Todo, statusOptions, priorityOptions } from "../../types/todo"; // priorityOptions をインポート
 import { getUsers } from "../../../users/utils/user";
+import { format } from "date-fns"; // format をインポート
+import { ja } from "date-fns/locale"; // ja ロケールをインポート
 
 interface Props {
   todo: Todo;
@@ -36,6 +38,18 @@ export const TodoDetail: React.FC<Props> = ({ todo }) => {
         <span className="font-bold">ステータス:</span>{" "}
         {statusOptions[todo.status]}
       </div>
+      {/* 優先度表示を追加 */}
+      <div className="flex items-center mb-2">
+        <span className="font-bold">優先度:</span>{" "}
+        {priorityOptions[todo.priority]}
+      </div>
+      {/* 期日表示を追加 */}
+      {todo.dueDate && (
+        <div className="flex items-center mb-2">
+          <span className="font-bold">期日:</span>{" "}
+          {format(todo.dueDate, "yyyy/MM/dd", { locale: ja })}
+        </div>
+      )}
       <div className="flex items-center mb-2">
         <span className="font-bold">作成者:</span> {todo.name}
       </div>

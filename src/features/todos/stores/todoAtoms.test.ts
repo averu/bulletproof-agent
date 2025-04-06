@@ -34,6 +34,8 @@ describe("addTodoAtom", () => {
       deleted: false,
       userId: "user1",
       name: "User 1",
+      priority: "medium", // 追加
+      dueDate: null, // 追加
     };
 
     store.set(addTodoAtom, newTodoInput); // addTodoAtom を呼び出す
@@ -46,6 +48,8 @@ describe("addTodoAtom", () => {
       description: "",
       status: "not-started",
       deleted: false,
+      priority: "medium", // 結果の確認にも追加
+      dueDate: null, // 結果の確認にも追加
     });
     expect(localStorage.setItem).toHaveBeenCalled();
   });
@@ -61,6 +65,8 @@ describe("addTodoAtom", () => {
       deleted: false,
       userId: "user1",
       name: "User 1",
+      priority: "medium", // 追加
+      dueDate: null, // 追加
     };
 
     store.set(addTodoAtom, newTodoInput);
@@ -81,6 +87,8 @@ describe("updateTodoAtom", () => {
         deleted: false,
         userId: "user1",
         name: "User 1",
+        priority: "medium", // 追加
+        dueDate: null, // 追加
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -102,6 +110,8 @@ describe("updateTodoAtom", () => {
       description: "",
       status: "not-started",
       deleted: false, // deleted は更新されない
+      priority: "medium", // 結果の確認にも追加 (更新しない場合)
+      dueDate: null, // 結果の確認にも追加 (更新しない場合)
     });
     expect(localStorage.setItem).toHaveBeenCalled();
   });
@@ -133,6 +143,8 @@ const testTodos: Todo[] = [
     deleted: false,
     userId: "user1",
     name: "User 1",
+    priority: "medium", // 追加
+    dueDate: new Date("2023-01-10"), // 追加
     createdAt: new Date("2023-01-01T10:00:00Z"),
     updatedAt: new Date("2023-01-01T10:00:00Z"),
   },
@@ -144,6 +156,8 @@ const testTodos: Todo[] = [
     deleted: false,
     userId: "user1",
     name: "User 1",
+    priority: "high", // 追加
+    dueDate: new Date("2023-01-05"), // 追加
     createdAt: new Date("2023-01-02T11:00:00Z"),
     updatedAt: new Date("2023-01-02T11:00:00Z"),
   },
@@ -155,6 +169,8 @@ const testTodos: Todo[] = [
     deleted: false,
     userId: "user1",
     name: "User 1",
+    priority: "low", // 追加
+    dueDate: null, // 追加 (期日なし)
     createdAt: new Date("2023-01-03T12:00:00Z"),
     updatedAt: new Date("2023-01-03T12:00:00Z"),
   },
@@ -166,6 +182,8 @@ const testTodos: Todo[] = [
     deleted: true, // 完了済み (deleted=true) だがステータスは pending
     userId: "user1",
     name: "User 1",
+    priority: "medium", // 追加
+    dueDate: new Date("2023-01-08"), // 追加
     createdAt: new Date("2023-01-04T13:00:00Z"),
     updatedAt: new Date("2023-01-04T13:00:00Z"),
   },

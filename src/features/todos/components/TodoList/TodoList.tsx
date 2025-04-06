@@ -114,6 +114,14 @@ export const TodoList: React.FC = () => {
               <th className="p-4 text-left text-sm font-bold text-gray-700">
                 ステータス
               </th>
+              {/* 優先度ヘッダーを追加 */}
+              <th className="p-4 text-left text-sm font-bold text-gray-700">
+                優先度
+              </th>
+              {/* 期日ヘッダーを追加 */}
+              <th className="p-4 text-left text-sm font-bold text-gray-700">
+                期日
+              </th>
               <th className="p-4 text-left text-sm font-bold text-gray-700">
                 <SortButton
                   sortType={sortType}
@@ -138,7 +146,7 @@ export const TodoList: React.FC = () => {
               <tr>
                 {/* テーブルのカラム数に合わせて colspan を設定 */}
                 <td
-                  colSpan={7} // タイトル、作成者、担当者、ステータス、作成日、更新日、操作 の7カラム
+                  colSpan={9} // カラム数が増えたため 9 に変更
                   className="p-4 text-center text-gray-500"
                 >
                   {noTodosMessage}

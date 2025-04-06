@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useAtom } from "jotai";
-import { Todo, Status, statusOptions } from "../../types/todo";
+import {
+  Todo,
+  Status,
+  statusOptions,
+  Priority,
+  priorityOptions,
+} from "../../types/todo"; // Priority, priorityOptions を追加
 import { Button } from "../../../../components/Elements";
 import { Input } from "../../../../components/Form/Input";
 import { Textarea } from "../../../../components/Form/Textarea";
-import { todosAtom, showTodoEditAtom } from "../../stores";
+import { showTodoEditAtom, updateTodoAtom } from "../../stores"; // updateTodoAtom を追加, todosAtom を削除
 import { getUsers } from "../../../../features/users/utils/user";
+import { format } from "date-fns"; // format を追加
 
 interface Props {
   todo: Todo;
@@ -17,8 +24,14 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
   const [status, setStatus] = useState(todo.status);
   const [assigneeId, setAssigneeId] = useState(todo.assigneeId || "");
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+  const [priority, setPriority] = useState<Priority>(todo.priority); // 優先度 state 追加
+  // dueDate は yyyy-MM-dd 形式の文字列で保持 (input type="date" のため)
+  const [dueDate, setDueDate] = useState<string>(
+    todo.dueDate ? format(todo.dueDate, "yyyy-MM-dd") : ""
+  );
   const [isLoading, setIsLoading] = useState(false); // ローディング状態を追加
-  const [todos, setTodos] = useAtom(todosAtom);
+  // const [todos, setTodos] = useAtom(todosAtom); // 直接 todosAtom を更新せず updateTodoAtom を使う
+  const [, updateTodo] = useAtom(updateTodoAtom); // updateTodoAtom を使う
   const [, setShowTodoEdit] = useAtom(showTodoEditAtom);
 
   useEffect(() => {
@@ -35,12 +48,19 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
     fetchUsers();
   }, []);
 
-  const handleSave = (updatedTodo: Todo) => {
-    const updatedTodos = (todos || []).map((t) =>
-      t.id === updatedTodo.id ? updatedTodo : t
-    );
-    setTodos(updatedTodos);
-    setShowTodoEdit(false);
+  const handleSave = () => {
+    // updateTodoAtom に渡すオブジェクトを作成
+    const updateData = {
+      id: todo.id,
+      title,
+      description,
+      status,
+      priority, // 追加
+      dueDate: dueDate ? new Date(dueDate) : null, // Date or null に変換
+      assigneeId: assigneeId || undefined,
+    };
+    updateTodo(updateData); // updateTodoAtom を呼び出す
+    setShowTodoEdit(false); // モーダルを閉じる
   };
 
   const handleCancel = () => {
@@ -122,18 +142,49 @@ export const TodoEdit: React.FC<Props> = ({ todo }) => {
           </select>
         )}
       </div>
+
+      {/* 優先度 */}
+      <div className="mb-4">
+        <label
+          htmlFor="priority-edit" // id を変更
+          className="block text-sm font-medium text-gray-700"
+        >
+          優先度
+        </label>
+        <select
+          id="priority-edit" // id を変更
+          value={priority}
+          onChange={(e) => setPriority(e.target.value as Priority)}
+          className="mt-1 block w-full py-2 px-3 border text-gray-700 border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          {(Object.keys(priorityOptions) as Priority[]).map((p) => (
+            <option key={p} value={p}>
+              {priorityOptions[p]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 期日 */}
+      <div className="mb-4">
+        <label
+          htmlFor="dueDate-edit" // id を変更
+          className="block text-sm font-medium text-gray-700"
+        >
+          期日
+        </label>
+        <Input
+          type="date"
+          id="dueDate-edit" // id を変更
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="mt-1 block w-full"
+        />
+      </div>
+
       <div className="flex justify-end">
         <Button
-          onClick={() =>
-            handleSave({
-              ...todo,
-              title,
-              description,
-              status,
-              assigneeId,
-              updatedAt: new Date(),
-            })
-          }
+          onClick={handleSave} // 引数なしで呼び出すように変更
           variant="primary"
           className="mr-2"
         >
