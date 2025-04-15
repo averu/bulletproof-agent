@@ -15,11 +15,27 @@ export const sortTypeAtom = atomWithStorage<{
 // フィルタリングの状態を保持する atom ('all', 'active', 'completed')
 export const filterTypeAtom = atomWithStorage<Status[]>( // 型を Status[] に変更 (複数選択)
   "filterType",
-  [], // 初期値は空配列 (すべて表示)
+  [], // 初期値は空配列 (すべて表示 -> 変更: 何も選択されていない状態)
 );
 
 // 検索キーワードを保持する atom
 export const searchTermAtom = atom("");
+
+// 担当者フィルターの状態を保持する atom (空文字列はすべて表示)
+export const filterAssigneeIdAtom = atomWithStorage<string>(
+  "filterAssigneeId",
+  "",
+);
+
+// 期日フィルターの状態を保持する atom (null は未指定)
+export const filterStartDateAtom = atomWithStorage<string | null>(
+  "filterStartDate",
+  null,
+);
+export const filterEndDateAtom = atomWithStorage<string | null>(
+  "filterEndDate",
+  null,
+);
 
 // プライマリアトム：Todo リストを保持
 export const todosAtom = atomWithStorage<Todo[] | undefined>(
@@ -52,34 +68,76 @@ export const sortedTodosAtom = atom((get) => {
   });
 });
 
-// 派生アトム：フィルタリングされた Todo リスト
+// 派生アトム：フィルタリングされた Todo リスト (ステータス)
 export const filteredTodosAtom = atom((get) => {
   const todos = get(sortedTodosAtom); // ソート済みのリストを使用
   const selectedStatuses = get(filterTypeAtom); // 型は Status[]
 
-  // 選択されたステータスがない場合 (空配列) は、すべての Todo を返す
+  // 選択されたステータスがない場合 (空配列) は、空のリストを返す
   if (selectedStatuses.length === 0) {
-    return todos;
+    return []; // 変更: todos -> []
   }
 
   // 選択されたステータスのいずれかに一致する Todo をフィルタリング
   return todos.filter((todo) => selectedStatuses.includes(todo.status));
 });
 
-// 派生アトム：検索された Todo リスト
+// 派生アトム：検索および他のフィルターを適用した最終的な Todo リスト
 export const searchedTodosAtom = atom((get) => {
-  const todos = get(filteredTodosAtom); // フィルタリング済みのリストを使用
+  let todos = get(filteredTodosAtom); // ステータスフィルタリング済みのリストを使用
   const searchTerm = get(searchTermAtom).toLowerCase();
+  const filterAssigneeId = get(filterAssigneeIdAtom);
+  const filterStartDateStr = get(filterStartDateAtom); // 開始日を取得 (文字列 or null)
+  const filterEndDateStr = get(filterEndDateAtom); // 終了日を取得 (文字列 or null)
 
-  if (!searchTerm) {
-    return todos;
+  // 担当者IDで絞り込み (filterAssigneeId が空文字列でない場合)
+  if (filterAssigneeId) {
+    // assigneeId が null や undefined の場合も考慮
+    todos = todos.filter((todo) =>
+      todo.assigneeId && todo.assigneeId === filterAssigneeId
+    );
   }
 
-  return todos.filter(
-    (todo) =>
-      todo.title.toLowerCase().includes(searchTerm) ||
-      (todo.description && todo.description.toLowerCase().includes(searchTerm)), // description を検索対象にする
-  );
+  // 期日で絞り込み
+  const startDate = filterStartDateStr
+    ? new Date(filterStartDateStr + "T00:00:00")
+    : null; // Dateオブジェクトに変換 (時刻を00:00:00に)
+  const endDate = filterEndDateStr
+    ? new Date(filterEndDateStr + "T23:59:59")
+    : null; // Dateオブジェクトに変換 (時刻を23:59:59に)
+
+  if (startDate || endDate) {
+    todos = todos.filter((todo) => {
+      if (!todo.dueDate) return false; // 期日がないものは除外
+
+      // todo.dueDate が Date オブジェクトであることを確認 (もし文字列なら変換)
+      const todoDueDate = todo.dueDate instanceof Date
+        ? todo.dueDate
+        : new Date(todo.dueDate);
+
+      // 開始日チェック (startDate があり、かつ todoDueDate が startDate より前なら false)
+      if (startDate && todoDueDate < startDate) {
+        return false;
+      }
+      // 終了日チェック (endDate があり、かつ todoDueDate が endDate より後なら false)
+      if (endDate && todoDueDate > endDate) {
+        return false;
+      }
+      return true; // 上記チェックをパスしたら true
+    });
+  }
+
+  // 検索キーワードで絞り込み (searchTerm が空文字列でない場合)
+  if (searchTerm) {
+    todos = todos.filter(
+      (todo) =>
+        todo.title.toLowerCase().includes(searchTerm) ||
+        (todo.description &&
+          todo.description.toLowerCase().includes(searchTerm)),
+    );
+  }
+
+  return todos; // 最終的なリストを返す
 });
 
 // 選択されたTodoのID
