@@ -78,7 +78,10 @@ export const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
       </td>
       <td className="p-4 text-gray-500">{statusOptions[todo.status]}</td>
       {/* 優先度セルを追加 */}
-      <td className="p-4 text-gray-500">{priorityOptions[todo.priority]}</td>
+      <td className="p-4 text-gray-500">
+        {priorityOptions[todo.priority ?? "unset"]}
+      </td>{" "}
+      {/* null の場合は "unset" を表示 */}
       {/* 期日セルを追加 */}
       <td className="p-4 text-gray-500">
         {todo.dueDate ? format(todo.dueDate, "yyyy/MM/dd", { locale: ja }) : ""}

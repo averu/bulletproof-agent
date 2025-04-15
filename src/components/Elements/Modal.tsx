@@ -19,7 +19,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
         }
       }}
     >
-      <div className="relative p-5 border w-96 shadow-lg rounded-md bg-white">
+      <div className="relative p-5 border w-[480px] shadow-lg rounded-md bg-white">
+        {" "}
+        {/* w-96 を w-[480px] に変更 */}
         <div
           onClick={onClose}
           className="absolute top-2 right-2 hover:bg-gray-200 rounded-full p-1 cursor-pointer"
