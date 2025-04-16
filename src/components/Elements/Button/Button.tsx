@@ -23,7 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // ref を引数に追加
     const baseStyles =
-      "inline-flex items-center justify-center font-medium focus:outline-none";
+      "inline-flex items-center justify-center font-medium focus:outline-none focus-visible:outline-none";
 
     const sizeStyles = {
       sm: "px-3 py-1.5 text-sm",
